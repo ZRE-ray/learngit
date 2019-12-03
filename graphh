@@ -1,0 +1,43 @@
+#pragma once
+struct edg
+{
+	int dest;		//链路的另一路由器位置
+	int cost;		//链路的距离
+	edg* link;		//下一条链路
+};
+struct ver
+{
+	int data;		//路由器序号
+	edg* head;		//路由器头指针
+};
+struct node     //顶点节点，保存id和到源顶点的估算距离，优先队列需要的类型
+{
+	int id;     //源顶点id和估算距离
+	int pos;
+	int w;     
+};
+class graph
+{
+public:
+	graph();
+	~graph();
+	int getWeight(int v1, int v2);				//取边(v1,v2) 的权值
+	void insertver(int vertex);					//插入一个顶点
+	void removever(int vertex);					//删除一个顶点
+	void insertedg(int v1, int v2, int cost);	//插入一条边
+	void removeedg(int v1, int v2);				//删除一条边
+	int getfneighbor(int v);					//返回v的第一个邻接顶点
+	int getnneigbor(int v, int w);				//返回v的邻接顶点w的下一邻接顶点
+		//生成路由表
+	int* c(int v);
+	void output(int* d);
+	int numberofv() { return numv; }
+	int numberofe() { return nume; }
+	ver* input();
+protected:
+	int maxv;
+	int numv;
+	int nume;
+	ver * nodetable;
+	node* d;
+};

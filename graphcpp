@@ -1,0 +1,392 @@
+#include "graph.h"
+#include<iostream>
+#include <queue>
+using namespace std;
+
+graph::graph()
+{
+	maxv = 30;
+	numv = 0;
+	nume = 0;
+	nodetable = new ver[maxv];	// 创建顶点表数组
+	if (nodetable == NULL)
+	{
+		cout << " 存储分配错！" << endl;
+		exit(1);
+	}
+	for (int i = 0; i < maxv; i++)
+		nodetable[i].head = NULL;
+}
+
+graph::~graph()
+{
+	for (int i = 0; i < numv; i++)
+	{
+		edg* current = nodetable[i].head;
+		while (current != NULL)
+		{
+			nodetable[i].head = current->link;
+			delete current;
+			current = nodetable[i].head;
+		}
+	}
+	delete[]nodetable; // 删除顶点表数组
+}
+
+int graph::getWeight(int v1, int v2)
+{
+	for (int j = 0; j < numv; j++)
+	{
+		if (nodetable[j].data == v1)
+		{
+			v1 = j;
+			break;
+		}
+	}
+	for (int i = 0; i < numv; i++)
+	{
+		if (nodetable[i].data == v2)
+		{
+			v2 = i;
+			break;
+		}
+	}
+	if (v1 != -1 && v2 != -1)
+	{
+		edg* first = nodetable[v1].head;					//找头顶点v1
+		while (first != NULL)
+		{
+			if (first->dest == v2)							//找尾顶点v2
+			{
+				return first->cost;
+				break;
+			}
+			first = first->link;
+		}
+	}
+	return 0;												//边不存在，返回0
+}
+
+void graph::insertver(int vertex)
+{
+	if (numv == maxv)
+	{
+		cout << "顶点表满，无法再插入新的节点";				//顶点表满,  不能插入
+		exit(-1);
+	}
+	nodetable[numv].data = vertex;							//插入在表的最后
+	numv++;													//当前顶点数加1
+}
+
+void graph::removever(int v)
+{
+	int ad = -1;
+	for (int n = 0; n < numv; n++)
+	{
+		if (nodetable[n].data == v)
+		{
+			ad = n;
+			break;
+		}
+	}
+	if (numv == 1 || ad < 0 || ad >= numv) 	
+	{
+		cout << "路由器序号错误，无法删除该路由器" << endl;
+		exit(-1);
+	}
+	edg* p = NULL;
+	edg* s = NULL;
+	edg* t = NULL;
+	int k = 0;
+	while (nodetable[ad].head != NULL) 
+	{ // 删除第v 个边链表中所有结点
+		p = nodetable[ad].head;
+		k = p->dest; // 取邻接顶点k
+		s = nodetable[k].head;
+		t = NULL; // 找对称存放的边结点
+		while (s != NULL)
+		{
+			if (s->dest == v)
+			{
+				t = s;
+				break;
+			}
+			s = s->link;
+		}
+		if (s != NULL) 
+		{ // 删除对称存放的边结点
+			if (t == NULL) 
+				nodetable[k].head = s->link;
+			else 
+				t->link = s->link;
+			delete s;
+		}
+		nodetable[ad].head = p->link; // 清除顶点v 的边链表结点
+		delete p; 
+		nume--; // 与顶点v 相关联的边数减一
+	}
+	numv--;  // 图的顶点个数减1
+	nodetable[ad].data = nodetable[numv].data;
+	// 填补# 用最后一个顶点来代替
+	p = nodetable[ad].head = nodetable[numv].head;
+	while (p != NULL) 
+	{ 
+		s = nodetable[p->dest].head;
+		while (s != NULL)
+			if (s->dest == numv) 
+			{
+				s->dest = ad; // 修改对应边顶点的下标
+				break;
+			}
+			else 
+				s = s->link;
+		p = p->link;
+	}
+}
+
+void graph::insertedg(int v1, int v2, int cost)
+{
+	int ad1 = -1;
+	int ad2 = -1;
+	for (int i = 0; i < numv; i++)
+	{
+		if (nodetable[i].data == v1)
+		{
+			ad1 = i;
+			break;
+		}
+	}
+	for (int i = 0; i < numv; i++)
+	{
+		if (nodetable[i].data == v2)
+		{
+			ad2 = i;
+			break;
+		}
+	}
+	if (ad1 != -1 && ad1 < numv && ad2 != -1 && ad2 < numv)
+	{
+		edg* tem = nodetable[ad1].head; //v1 对应的边链表头指针
+		edg* curr = nodetable[ad1].head;
+		while (curr != NULL)			//遍历邻接表，查询是否有该边
+		{
+			if (curr->dest == ad2)
+				break;
+			curr = curr->link;
+		}
+		if (curr != NULL)				//图中已经存在该边
+			cout << "图中已存在此边";
+		else							//图中无此边，进行插入
+		{
+			edg* new1 = new edg;
+			edg* new2 = new edg;
+			new1->dest = ad2;
+			new1->cost = cost;
+			new1->link = nodetable[ad1].head;	//前插法链入v1顶点的链表
+			nodetable[ad1].head = new1;
+			new2->dest = ad1;
+			new2->cost = cost;
+			new2->link = nodetable[ad2].head;		//前插法链入v2顶点的链表
+			nodetable[ad2].head = new2;
+			nume++;								//当前边数加1
+		}
+	}
+}
+
+void graph::removeedg(int v1, int v2)
+{
+	int ad1 = -1;
+	int ad2 = -1;
+	for (int i = 0; i < numv; i++)
+	{
+		if (nodetable[i].data == v1)
+		{
+			ad1 = i;
+			break;
+		}
+	}
+	for (int i = 0; i < numv; i++)
+	{
+		if (nodetable[i].data == v2)
+		{
+			ad2 = i;
+			break;
+		}
+	}
+	if (ad1 != -1 && ad2 != -1)
+	{
+		edg* p = nodetable[ad1].head, * q = NULL, * s = p;
+		while (p != NULL && p->dest != ad2)     //v1对应边链表中找被删边               
+		{
+			q = p;
+			p = p->link;
+		}
+		if (p != NULL)
+		{          //找到被删边结点                
+			if (p == s)
+				nodetable[ad1].head = p->link;  //该结点是边链表首结点              
+			else
+				q->link = p->link;
+			delete p;
+		}
+		else
+			cout << "未找到要删除的边" << endl;	//没有找到被删边结点           
+		p = nodetable[ad2].head;
+		q = NULL;
+		s = p;//v2对应边链表中删除         
+		while (p->dest != ad1)      //寻找被删边结点              
+		{
+			q = p;
+			p = p->link;
+		}
+		if (p == s)
+			nodetable[ad2].head = p->link;   //该结点是边链表首结点         
+		else
+			q->link = p->link;
+		delete p;
+		nume--;
+	}
+	//没有找到结点 
+}
+
+int graph::getfneighbor(int v)
+{
+	if (v != -1)
+	{
+		edg* tem = nodetable[v].head;
+		if (tem != NULL)
+			return tem->dest;
+	}
+	return -1;
+}
+
+int graph::getnneigbor(int v, int w)
+{
+	if (v != -1)
+	{
+		edg* tem = nodetable[v].head;
+		while (tem != NULL)			//遍历邻接表
+		{
+			if (tem->dest == w)
+				break;
+			tem = tem->link;
+		}
+		if (tem != NULL && tem->link != NULL)
+			return tem->link->dest;
+	}
+	return -1;						//不存在下一邻接顶点
+}
+
+int* graph::c(int s)
+{
+	int ad = 0;
+	for (int n = 0; n < numv; n++)
+	{
+		if (nodetable[n].data == s)
+		{
+			ad = n;
+			break;
+		}
+	}
+	queue<node> q;
+	int n = numberofv();
+	bool* visited = new bool[n];
+	d = new node[n];
+	int* parent = new int[n];
+	for (int i = 0; i < n; i++) //初始化
+	{
+		d[i].id = nodetable[i].data;
+		d[i].pos = i;
+		d[i].w = 99;				//估算距离置最大
+		parent[i] = -1;         //每个顶点都无父亲节点
+		visited[i] = false;     //都未找到最短路
+	}
+	d[ad].w = 0;                 //源点到源点最短路权值为0
+	q.push(d[ad]);               //压入队列中
+	while (!q.empty())           //算法的核心，队列空说明完成了操作
+	{
+		node cd = q.front();      //取最小估算距离顶点
+		q.pop();
+		int u = cd.pos;
+		if (visited[u])				//注意这一句的深意，避免很多不必要的操作
+			continue;
+		visited[u] = true;
+		edg* p = nodetable[u].head;			//松弛操作
+		while (p != NULL)    //找所有与他相邻的顶点，进行松弛操作，更新估算距离，压入队列。
+		{
+			int v = p->dest;
+			if (!visited[v] && d[v].w > d[u].w + p->cost)
+		    {
+				d[v].w = d[u].w + p->cost;
+				parent[v] = u;
+				q.push(d[v]);
+            }
+			p = p->link;
+		}
+	}
+	return parent;
+}
+
+void graph::output(int* parent)
+{
+	int i = 0;
+	cout << "请输入想要查询路由表的路由器号码:" << endl;
+	cin >> i;
+	int chan = 0;
+	for (int n = 0; n < numv; n++)
+	{
+		if (nodetable[n].data == i)
+		{
+			chan = n;
+			break;
+		}
+	}
+	cout << "以下为路由器" << "的路由表" << endl;
+	cout << "目的网络				下一跳地址" << endl;
+	int m = numberofv();
+	for (int n=0;n<m-1;n++)
+	{
+		int tem = n;
+		cout << d[n].id << ".x.x.x" << "					";
+		while (parent[tem] != chan)
+		{
+			if (parent[tem] == -1)
+				break;
+			tem = parent[tem];
+		}
+		if (tem == chan)
+		{
+			cout << "直接交付" << endl;
+		}
+		else
+			cout << "路由器" << d[tem].id << endl;
+	}
+}
+
+ver* graph::input()
+{
+	int m = 1;
+	numv = 0;
+	int a[9] = { 1,2,3,4,5,6,7,8,9 };
+	for (int i = 0; i < 10; i++)
+	{
+		insertver(a[i]);
+	}
+	insertedg(1, 2, 2);
+	insertedg(2, 3, 2);
+	insertedg(2, 4, 4);
+	insertedg(1, 7, 1);
+	insertedg(1, 6, 1);
+	insertedg(5, 6, 5);
+	insertedg(4, 5, 1);
+	insertedg(3, 4, 1);
+	insertedg(4, 9, 2);
+	insertedg(8, 9, 2);
+	insertedg(6, 7, 1);
+	insertedg(3, 6, 3);
+	insertedg(3, 7, 2);
+	insertedg(4, 7, 6);
+	insertedg(7, 8, 3);
+	insertedg(4, 8, 5);
+	return nodetable;
+}
