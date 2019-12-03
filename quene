@@ -1,0 +1,13 @@
+class LinkedQueue {
+public:
+	LinkedQueue() :rear(NULL), front(NULL) {};
+	~LinkedQueue(makeEmpty());      
+	bool EnQueue(const T& x);    //入队      
+	bool DeQueue(T& x);              //出队      
+    bool getFront(T& x) const;      
+    void makeEmpty();      
+    bool IsEmpty() const { return front==NULL;}      
+    int getSize() const;  
+protected:     
+	LinkNode<T> * front,* rear; 
+}; 
