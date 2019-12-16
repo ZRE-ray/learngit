@@ -1,0 +1,12 @@
+#pragma once
+#include"graph.h"
+
+class Remove:public graph
+{
+public:
+	Remove();
+	void removever(int vertex);					//删除一个顶点
+	void removeedg(int v1, int v2);				//删除一条边
+	~Remove();
+};
+
