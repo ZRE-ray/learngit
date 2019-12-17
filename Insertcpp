@@ -75,6 +75,33 @@ void Insert::insertedg(int v1, int v2, int cost)
 	}
 }
 
+ver* Insert::input()
+{
+	int m = 1;
+	numv = 0;
+	int a[9] = { 1,2,3,4,5,6,7,8,9 };
+	for (int i = 0; i < 9; i++)
+	{
+		insertver(a[i]);
+	}
+	insertedg(1, 2, 2);
+	insertedg(2, 3, 2);
+	insertedg(2, 4, 4);
+	insertedg(1, 7, 1);
+	insertedg(1, 6, 1);
+	insertedg(5, 6, 5);
+	insertedg(4, 5, 1);
+	insertedg(3, 4, 1);
+	insertedg(4, 9, 2);
+	insertedg(8, 9, 2);
+	insertedg(6, 7, 1);
+	insertedg(3, 6, 3);
+	insertedg(3, 7, 2);
+	insertedg(4, 7, 6);
+	insertedg(7, 8, 3);
+	insertedg(4, 8, 5);
+	return nodetable;
+}
 
 Insert::~Insert()
 {

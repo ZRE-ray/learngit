@@ -6,6 +6,7 @@ public:
 	Insert();
 	int insertver(int vertex);					//插入一个顶点
 	void insertedg(int v1, int v2, int cost);	//插入一条边
+	ver* input();
 	~Insert();
 };
 

@@ -1,7 +1,7 @@
 #pragma once
-#include"graph.h"
+#include"Insert.h"
 
-class Remove:public graph
+class Remove:public Insert
 {
 public:
 	Remove();

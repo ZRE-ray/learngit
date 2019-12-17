@@ -61,6 +61,7 @@ void Remove::removever(int v)
 	{
 		s = nodetable[p->dest].head;
 		while (s != NULL)
+		{
 			if (s->dest == numv)
 			{
 				s->dest = ad; // 修改对应边顶点的下标
@@ -68,6 +69,7 @@ void Remove::removever(int v)
 			}
 			else
 				s = s->link;
+		}
 		p = p->link;
 	}
 }
@@ -127,7 +129,6 @@ void Remove::removeedg(int v1, int v2)
 	}
 	//没有找到结点 
 }
-
 
 Remove::~Remove()
 {
