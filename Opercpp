@@ -1,0 +1,131 @@
+#include "Oper.h"
+#include<iostream>
+#include<queue>
+using namespace std;
+
+
+Oper::Oper()
+{
+}
+
+int* Oper::create(int s)
+{
+	int ad = 0;
+	for (int n = 0; n < graph::numv; n++)
+	{
+		if (graph::nodetable[n].data == s)
+		{
+			ad = n;
+			break;
+		}
+	}
+	queue<node> que;
+	int n = graph::numberofv();
+	bool* visited = new bool[n];
+	graph::d = new node[n];
+	int* parent = new int[n];
+	for (int i = 0; i < n; i++) //初始化
+	{
+		graph::d[i].id = graph::nodetable[i].data;
+		graph::d[i].pos = i;
+		graph::d[i].w = 99;				//估算距离置最大
+		parent[i] = -1;         //每个顶点都无父亲节点
+		visited[i] = false;     //都未找到最短路
+	}
+	graph::d[ad].w = 0;                 //源点到源点最短路权值为0
+	que.push(graph::d[ad]);               //压入队列中
+	while (!que.empty())           //算法的核心，队列空说明完成了操作
+	{
+		node cd = que.front();      //取最小估算距离顶点
+		que.pop();
+		int temp = cd.pos;
+		if (visited[temp])				//注意这一句的深意，避免很多不必要的操作
+			continue;
+		visited[temp] = true;
+		edg* tem = graph::nodetable[temp].head;			//松弛操作
+		while (tem != NULL)    //找所有与他相邻的顶点，进行松弛操作，更新估算距离，压入队列。
+		{
+			int v = tem->dest;
+			if (!visited[v] && graph::d[v].w > graph::d[temp].w + tem->cost)
+			{
+				graph::d[v].w = graph::d[temp].w + tem->cost;
+				parent[v] = temp;
+				que.push(graph::d[v]);
+			}
+			tem = tem->link;
+		}
+	}
+	return parent;
+}
+
+void Oper::output(int* parent, int i)
+{
+	int chan = 0;
+	for (int n = 0; n < graph::numv; n++)
+	{
+		if (graph::nodetable[n].data == i)
+		{
+			chan = n;
+			break;
+		}
+	}
+	cout << "以下为路由器" << "的路由表" << endl;
+	cout << "目的网络				下一跳地址" << endl;
+	int m = graph::numberofv();
+	for (int n = 0; n < m; n++)
+	{
+		int tem = n;
+		cout << graph::d[n].id << ".x.x.x" << "					";
+		if (parent[tem] == -1 && n != chan)
+		{
+			cout << "该路由器不可达" << endl;
+		}
+		else
+		{
+			while (parent[tem] != chan)
+			{
+				if (parent[tem] == -1)
+					break;
+				tem = parent[tem];
+			}
+			if (tem == chan)
+			{
+				cout << "直接交付" << endl;
+			}
+			else
+				cout << "路由器" << graph::d[tem].id << endl;
+		}
+	}
+}
+
+ver* Oper::input()
+{
+	int m = 1;
+	graph::numv = 0;
+	int a[9] = { 1,2,3,4,5,6,7,8,9 };
+	for (int i = 0; i < 9; i++)
+	{
+		insertver(a[i]);
+	}
+	insertedg(1, 2, 2);
+	insertedg(2, 3, 2);
+	insertedg(2, 4, 4);
+	insertedg(1, 7, 1);
+	insertedg(1, 6, 1);
+	insertedg(5, 6, 5);
+	insertedg(4, 5, 1);
+	insertedg(3, 4, 1);
+	insertedg(4, 9, 2);
+	insertedg(8, 9, 2);
+	insertedg(6, 7, 1);
+	insertedg(3, 6, 3);
+	insertedg(3, 7, 2);
+	insertedg(4, 7, 6);
+	insertedg(7, 8, 3);
+	insertedg(4, 8, 5);
+	return graph::nodetable;
+}
+
+Oper::~Oper()
+{
+}

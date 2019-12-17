@@ -1,0 +1,11 @@
+#pragma once
+#include"Remove.h"
+class Oper:public Remove
+{
+public:
+	Oper();
+	int* create(int v);
+	void output(int* d, int i);
+	ver* input();
+	~Oper();
+};
