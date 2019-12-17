@@ -22,55 +22,70 @@ void Remove::removever(int v)
 		cout << "路由器序号错误，无法删除该路由器" << endl;
 		exit(-1);
 	}
+	int position = -1; //表示删除顶点在顶点数组中的位置
 	edg* p = NULL;
-	edg* s = NULL;
-	edg* t = NULL;
-	int k = 0;
-	while (nodetable[ad].head != NULL)
-	{ // 删除第v 个边链表中所有结点
-		p = nodetable[ad].head;
-		k = p->dest; // 取邻接顶点k
-		s = nodetable[k].head;
-		t = NULL; // 找对称存放的边结点
-		while (s != NULL)
-		{
-			if (s->dest == v)
-			{
-				t = s;
-				break;
-			}
-			s = s->link;
-		}
-		if (s != NULL)
-		{ // 删除对称存放的边结点
-			if (t == NULL)
-				nodetable[k].head = s->link;
-			else
-				t->link = s->link;
-			delete s;
-		}
-		nodetable[ad].head = p->link; // 清除顶点v 的边链表结点
-		delete p;
-		nume--; // 与顶点v 相关联的边数减一
-	}
-	numv--;  // 图的顶点个数减1
-	nodetable[ad].data = nodetable[numv].data;
-	// 填补# 用最后一个顶点来代替
-	p = nodetable[ad].head = nodetable[numv].head;
-	while (p != NULL)
+	edg* q = NULL;
+	edg* r = NULL;
+	//遍历顶点数组，并删除顶点数组中的被删顶点
+	for (int i = 0; i < numv; i++) 
 	{
-		s = nodetable[p->dest].head;
-		while (s != NULL)
+		if (nodetable[i].data == v) 
 		{
-			if (s->dest == numv)
+			position = i;
+			p = nodetable[i].head;
+			for (int j = i + 1; j < numv; j++) 
 			{
-				s->dest = ad; // 修改对应边顶点的下标
-				break;
+				nodetable[j - 1].data = nodetable[j].data;
+				nodetable[j - 1].head = nodetable[j].head;
 			}
-			else
-				s = s->link;
+			numv--;
+			break;
 		}
-		p = p->link;
+	}
+	if (position == -1) 
+	{
+		cout << "不存在数据信息为" << v << "的顶点" << endl;
+	}
+	else
+	{
+		//删除被删顶点链接的边信息
+		while (p) 
+		{
+			q = p->link;
+			delete p;
+			p = q;
+		}
+		//删除其它顶点中与position相关的边结点
+		for (int i = 0; i < numv; i++) 
+		{
+			p = nodetable[i].head;
+			while (p) 
+			{
+				if (p->dest == position) 
+				{
+					if (p == nodetable[i].head) 
+					{
+						nodetable[i].head = p->link;
+					}
+					else 
+					{
+						r->link = p->link;
+					}
+					q = p;
+					p = p->link;
+					delete q;
+				}
+				else 
+				{
+					if (p->dest > position) 
+					{
+						p->dest--;
+					}
+					r = p;
+					p = p->link;
+				}
+			}
+		}
 	}
 }
 
