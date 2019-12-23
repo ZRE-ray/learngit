@@ -91,6 +91,7 @@ void Remove::removever(int v)
 
 void Remove::removeedg(int v1, int v2)
 {
+	cout << "张睿" << endl;
 	int ad1 = -1;
 	int ad2 = -1;
 	for (int i = 0; i < numv; i++)
@@ -148,3 +149,4 @@ void Remove::removeedg(int v1, int v2)
 Remove::~Remove()
 {
 }
+
