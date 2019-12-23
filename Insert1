@@ -8,6 +8,7 @@ Insert::Insert()
 
 int Insert::insertver(int vertex)
 {
+	cout << "谢孜" << endl;
 	if (numv == maxv)
 	{
 		cout << "顶点表满，无法再插入新的节点";				//顶点表满,  不能插入
@@ -103,6 +104,8 @@ ver* Insert::input()
 	insertedg(4, 8, 5);
 	return nodetable;
 }
+<<<<<<< HEAD:Insert
+=======
 
 Insert::~Insert()
 {
@@ -212,6 +215,7 @@ ver* Insert::input()
 	insertedg(4, 8, 5);
 	return nodetable;
 }
+>>>>>>> 63b50d35a00323d6f7b44cfbb62f22339f37cedd:Insertcpp
 
 Insert::~Insert()
 {
