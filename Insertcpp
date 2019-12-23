@@ -1,0 +1,218 @@
+#include "Insert.h"
+#include<iostream>
+using namespace std;
+
+Insert::Insert()
+{
+}
+
+int Insert::insertver(int vertex)
+{
+	if (numv == maxv)
+	{
+		cout << "顶点表满，无法再插入新的节点";				//顶点表满,  不能插入
+		exit(-1);
+	}
+	for (int i = 0; i < numv; i++)
+	{
+		if (nodetable[i].data == vertex)
+		{
+			cout << "该顶点已存在，无法添加该顶点" << endl;
+			return 0;
+		}
+	}
+	nodetable[numv].data = vertex;							//插入在表的最后
+	numv++;													//当前顶点数加1
+	return 1;
+}
+
+void Insert::insertedg(int v1, int v2, int cost)
+{
+	cout << "张睿" << endl;
+	int ad1 = -1;
+	int ad2 = -1;
+	for (int i = 0; i < numv; i++)
+	{
+		if (nodetable[i].data == v1)
+		{
+			ad1 = i;
+			break;
+		}
+	}
+	for (int i = 0; i < numv; i++)
+	{
+		if (nodetable[i].data == v2)
+		{
+			ad2 = i;
+			break;
+		}
+	}
+	if (ad1 != -1 && ad1 < numv && ad2 != -1 && ad2 < numv)
+	{
+		edg* tem = nodetable[ad1].head; //v1 对应的边链表头指针
+		edg* curr = nodetable[ad1].head;
+		while (curr != NULL)			//遍历邻接表，查询是否有该边
+		{
+			if (curr->dest == ad2)
+				break;
+			curr = curr->link;
+		}
+		if (curr != NULL)				//图中已经存在该边
+			cout << "图中已存在此边";
+		else							//图中无此边，进行插入
+		{
+			edg* new1 = new edg;
+			edg* new2 = new edg;
+			new1->dest = ad2;
+			new1->cost = cost;
+			new1->link = nodetable[ad1].head;	//前插法链入v1顶点的链表
+			nodetable[ad1].head = new1;
+			new2->dest = ad1;
+			new2->cost = cost;
+			new2->link = nodetable[ad2].head;		//前插法链入v2顶点的链表
+			nodetable[ad2].head = new2;
+			nume++;								//当前边数加1
+		}
+	}
+}
+
+ver* Insert::input()
+{
+	int m = 1;
+	numv = 0;
+	int a[9] = { 1,2,3,4,5,6,7,8,9 };
+	for (int i = 0; i < 9; i++)
+	{
+		insertver(a[i]);
+	}
+	insertedg(1, 2, 2);
+	insertedg(2, 3, 2);
+	insertedg(2, 4, 4);
+	insertedg(1, 7, 1);
+	insertedg(1, 6, 1);
+	insertedg(5, 6, 5);
+	insertedg(4, 5, 1);
+	insertedg(3, 4, 1);
+	insertedg(4, 9, 2);
+	insertedg(8, 9, 2);
+	insertedg(6, 7, 1);
+	insertedg(3, 6, 3);
+	insertedg(3, 7, 2);
+	insertedg(4, 7, 6);
+	insertedg(7, 8, 3);
+	insertedg(4, 8, 5);
+	return nodetable;
+}
+
+Insert::~Insert()
+{
+}
+#include "Insert.h"
+#include<iostream>
+using namespace std;
+
+Insert::Insert()
+{
+}
+
+int Insert::insertver(int vertex)
+{
+	if (numv == maxv)
+	{
+		cout << "顶点表满，无法再插入新的节点";				//顶点表满,  不能插入
+		exit(-1);
+	}
+	for (int i = 0; i < numv; i++)
+	{
+		if (nodetable[i].data == vertex)
+		{
+			cout << "该顶点已存在，无法添加该顶点" << endl;
+			return 0;
+		}
+	}
+	nodetable[numv].data = vertex;							//插入在表的最后
+	numv++;													//当前顶点数加1
+	return 1;
+}
+
+void Insert::insertedg(int v1, int v2, int cost)
+{
+	cout << "张睿" << endl;
+	int ad1 = -1;
+	int ad2 = -1;
+	for (int i = 0; i < numv; i++)
+	{
+		if (nodetable[i].data == v1)
+		{
+			ad1 = i;
+			break;
+		}
+	}
+	for (int i = 0; i < numv; i++)
+	{
+		if (nodetable[i].data == v2)
+		{
+			ad2 = i;
+			break;
+		}
+	}
+	if (ad1 != -1 && ad1 < numv && ad2 != -1 && ad2 < numv)
+	{
+		edg* tem = nodetable[ad1].head; //v1 对应的边链表头指针
+		edg* curr = nodetable[ad1].head;
+		while (curr != NULL)			//遍历邻接表，查询是否有该边
+		{
+			if (curr->dest == ad2)
+				break;
+			curr = curr->link;
+		}
+		if (curr != NULL)				//图中已经存在该边
+			cout << "图中已存在此边";
+		else							//图中无此边，进行插入
+		{
+			edg* new1 = new edg;
+			edg* new2 = new edg;
+			new1->dest = ad2;
+			new1->cost = cost;
+			new1->link = nodetable[ad1].head;	//前插法链入v1顶点的链表
+			nodetable[ad1].head = new1;
+			new2->dest = ad1;
+			new2->cost = cost;
+			new2->link = nodetable[ad2].head;		//前插法链入v2顶点的链表
+			nodetable[ad2].head = new2;
+			nume++;								//当前边数加1
+		}
+	}
+}
+
+ver* Insert::input()
+{
+	int m = 1;
+	numv = 0;
+	int a[9] = { 1,2,3,4,5,6,7,8,9 };
+	for (int i = 0; i < 9; i++)
+	{
+		insertver(a[i]);
+	}
+	insertedg(1, 2, 2);
+	insertedg(2, 3, 2);
+	insertedg(2, 4, 4);
+	insertedg(1, 7, 1);
+	insertedg(1, 6, 1);
+	insertedg(5, 6, 5);
+	insertedg(4, 5, 1);
+	insertedg(3, 4, 1);
+	insertedg(4, 9, 2);
+	insertedg(8, 9, 2);
+	insertedg(6, 7, 1);
+	insertedg(3, 6, 3);
+	insertedg(3, 7, 2);
+	insertedg(4, 7, 6);
+	insertedg(7, 8, 3);
+	insertedg(4, 8, 5);
+	return nodetable;
+}
+
+Insert::~Insert()
+{
+}
